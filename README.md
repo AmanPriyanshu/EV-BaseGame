@@ -37,4 +37,16 @@ The output must be a single probability distributions allowing the individual to
 
 ## Understanding the genomics:
 
-Input context - 
+Input context - 24 `input_variables` and 5 `output_variables`. Reconstituting the individual inputs to be representable.
+
+`24 input_variables` --> closest 2 power is `32` --> basically `val=(00000)` to restrict space, to the 24 possible inputs, we mod val with 24 (`val%24`).
+
+`5 output_variables` --> closest 2 power is `8` --> basically `out=(000)` to restrict space, to the 5 possible inputs, we mod val with 5 (`out%5`).
+
+Now we want float values to represent the passing weights between the inputs/outputs. Lets begin understanding the sensitivity of the softmax function, we can simply extend the sigmoid function's sensitive to approximate softmax, as sigmoid is simply limited softmax.
+
+
+
+```
+| 0/1 | 00000 | 000 | 
+```
