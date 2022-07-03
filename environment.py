@@ -30,10 +30,25 @@ class Environment:
 		colourful_maps[:, self.margin+self.height:self.height+2*self.margin, :] = 0
 		return interaction_maps, colourful_maps
 
+	def generate_random_positions(self):
+		y_array, x_array = [], []
+		while len(y_array)!=self.population_size:
+			y = np.random.randint(low=self.margin, high=self.height+self.margin)
+			x = np.random.randint(low=self.margin, high=self.width+self.margin)
+			not_present = True
+			for i,j in zip(x_array, y_array):
+				if i==x and j==y:
+					not_present = False
+			if not_present:
+				y_array.append(y)
+				x_array.append(x)
+		return x_array, y_array
+
 	def randomly_populate(self):
 		pop = []
+		x_array, y_array = self.generate_random_positions()
 		for i in range(self.population_size):
-			individual = {"bin_genes": self.random_individual_generator_func(),"yt": np.random.randint(low=self.margin, high=self.height+self.margin), "xt": np.random.randint(low=self.margin, high=self.width+self.margin), "prev_direction": "north", "moving": 0}
+			individual = {"bin_genes": self.random_individual_generator_func(),"yt": y_array[i], "xt": x_array[i], "prev_direction": "north", "moving": 0}
 			pop.append(individual)
 		return pop
 
@@ -57,14 +72,19 @@ class Environment:
 			for i,j in enumerate("RGB"):
 				record[j].append(rgb[i])
 				self.colourful_maps[record["x"][-1]][record["y"][-1]][i] = record[j][-1]
+				self.interaction_maps[record["x"][-1]][record["y"][-1]] = 2
 		record = pd.DataFrame(record)
 		record.to_csv("./env_pops/time_"+"0"*(len(str(self.total_generations)) - len(str(self.current_t)))+str(self.current_t)+".csv", index=False)
-		cv2.imwrite("./env_maps/time_"+"0"*(len(str(self.total_generations)) - len(str(self.current_t)))+str(self.current_t)+".png", self.colourful_maps)
+		resized_img = cv2.resize(self.colourful_maps, (self.width*2, self.height*2), interpolation = cv2.INTER_AREA)
+		cv2.imwrite("./env_maps/time_"+"0"*(len(str(self.total_generations)) - len(str(self.current_t)))+str(self.current_t)+".png", resized_img)
 
-
-
+	def take_next_steps(self, pop):
+		for individual in pop:
+			print(individual)
+			exit()
 
 if __name__ == '__main__':
-	env = Environment(random_individual_generator)
+	env = Environment(random_individual_generator, population_size=1000)
 	pop = env.randomly_populate()
 	env.draw_map(pop)
+	env.take_next_steps(pop)

@@ -37,9 +37,9 @@ The output must be a single probability distributions allowing the individual to
 
 ## Understanding the genomics:
 
-Input context - 24 `input_variables` and 5 `output_variables`. Reconstituting the individual inputs to be representable.
+Input context - 28 `input_variables` and 5 `output_variables`. Reconstituting the individual inputs to be representable.
 
-`24 input_variables` --> closest 2 power is `32` --> basically `val=(00000)` to restrict space, to the 24 possible inputs, we mod val with 24 (`val%24`). Can extend by 8 new inputs.
+`28 input_variables` --> closest 2 power is `32` --> basically `val=(00000)` to restrict space, to the 28 possible inputs, we mod val with 28 (`val%28`). Can extend by 4 new inputs.
 
 `5 output_variables` --> closest 2 power is `8` --> basically `out=(000)` to restrict space, to the 5 possible inputs, we mod val with 5 (`out%5`). Can extend by 3 new outputs.
 
