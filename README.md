@@ -39,14 +39,30 @@ The output must be a single probability distributions allowing the individual to
 
 Input context - 24 `input_variables` and 5 `output_variables`. Reconstituting the individual inputs to be representable.
 
-`24 input_variables` --> closest 2 power is `32` --> basically `val=(00000)` to restrict space, to the 24 possible inputs, we mod val with 24 (`val%24`).
+`24 input_variables` --> closest 2 power is `32` --> basically `val=(00000)` to restrict space, to the 24 possible inputs, we mod val with 24 (`val%24`). Can extend by 8 new inputs.
 
-`5 output_variables` --> closest 2 power is `8` --> basically `out=(000)` to restrict space, to the 5 possible inputs, we mod val with 5 (`out%5`).
+`5 output_variables` --> closest 2 power is `8` --> basically `out=(000)` to restrict space, to the 5 possible inputs, we mod val with 5 (`out%5`). Can extend by 3 new outputs.
 
 Now we want float values to represent the passing weights between the inputs/outputs. Lets begin understanding the sensitivity of the softmax function, we can simply extend the sigmoid function's sensitive to approximate softmax, as sigmoid is simply limited softmax.
 
+[sigmoid](/images/sigmoid.PNG)
 
+Looking at the graph, it should be substantial to consider upto 3 decimal places `._ _ _` at the same time, a bar between `[-4, 4]` should be sufficient. Therefore we need to find a numeric range constituting an integer space ∈ `[0, 8000] ~ [0, 8192) = [0, 2^13)`. It will then be normalized as `(value-4096)/1000`.
 
 ```
-| 0/1 | 00000 | 000 | 
+| 0 | 00000 | 000 | 0-000-000-000-000 |
 ```
+basically a total of `(1+5+3+13)=22` stream of binaries.
+
+### Representation:
+
+Although this isn't an essential representations are essential for visualizations. So lets discuss representations, now human DNA is represented by:
+
+```md
+1. adenine (A) - 00
+2. guanine (G) - 01
+3. cytosine (C) - 10
+4. thymine (T) - 11
+```
+
+Basically it can encode two bins (`00`). So, we can represent our entire stream by a stream of 11 (`A/G/C/T`).
