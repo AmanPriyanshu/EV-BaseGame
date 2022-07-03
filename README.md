@@ -65,4 +65,4 @@ Although this isn't an essential representations are essential for visualization
 4. thymine (T) - 11
 ```
 
-Basically it can encode two bins (`00`). So, we can represent our entire stream by a stream of 11 (`A/G/C/T`).
+Basically it can encode two bins (`00`). So, we can represent our entire stream by a stream of 11 (`A/G/C/T`). Colour representation - pixel colours are an interesting aspect of visulaization so, what we do is represent them by `RGB=[0,256)`, therefore we can extend our stream of `22 bins` by `2 bins`, making it `24 bins`. Divide it into `8-8-8 bins` allowing us to compute RGB values.

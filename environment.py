@@ -1,4 +1,6 @@
 import numpy as np
+from individual import random_individual_generator
+
 
 class Environment:
 	def __init__(self, height=300, width=300, safe_zones=[[150, 150, 0, 300]], population_size=100):
@@ -14,5 +16,8 @@ class Environment:
 		return interaction_maps, colourful_maps
 
 	def randomly_populate(self, random_individual_generator_func):
-		pass
+		pop = []
+		for i in range(self.randomly_populate):
+			individual = {"bin_genes": random_individual_generator_func(),"yt": np.random.randint(low=0, high=self.height), "xt": np.random.randint(low=0, high=self.width)}
+			pop.append(individual)
 
