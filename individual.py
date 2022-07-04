@@ -120,7 +120,7 @@ def make_children_function(individual_1, individual_2):
 	gene_sequence_1 = np.array([int(i) for i in "".join(individual_1["bin_genes"])])
 	gene_sequence_2 = np.array([int(i) for i in "".join(individual_2["bin_genes"])])
 	gene_sequence = np.where(np.random.randn(len(gene_sequence_1))>0.5, gene_sequence_1, gene_sequence_2)
-	gene_sequence = np.where(np.random.randn(len(gene_sequence_1))>0.0005, gene_sequence, 1-gene_sequence)
+	#gene_sequence = np.where(np.random.randn(len(gene_sequence))>0.0005, gene_sequence, 1-gene_sequence)
 	gene_sequence = "".join([str(i) for i in gene_sequence])
 	gene_sequence = [gene_sequence[i:i+22] for i in range(0, len(gene_sequence), 22)]
 	return gene_sequence
