@@ -82,13 +82,13 @@ class Environment:
 
 	def take_next_steps(self, pop):
 		for individual in pop:
-			state = self.read_individual_states_func(individual, self.interaction_maps[individual["yt"]-2:individual["yt"]+3, individual["xt"]-2:individual["xt"]+3])
-			self.take_individual_next_step_func(state, individual)
+			state, numeric_state = self.read_individual_states_func(individual, self.interaction_maps[individual["yt"]-2:individual["yt"]+3, individual["xt"]-2:individual["xt"]+3])
+			self.take_individual_next_step_func(numeric_state, individual)
 
 			exit()
 
 if __name__ == '__main__':
-	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, population_size=100)
+	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, population_size=100, height=10, width=11)
 	pop = env.randomly_populate()
 	env.draw_map(pop)
 	env.take_next_steps(pop)
