@@ -8,6 +8,7 @@ import warnings
 import os
 from tqdm import trange
 from record_experiment import main as gif_generator
+from mind_visualizer import generate_all_minds
 
 warnings.filterwarnings('ignore')
 
@@ -212,3 +213,4 @@ if __name__ == '__main__':
 	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=500, iterations_per_generation=150, total_generations=100, height=150, width=150)
 	env.run_experiment()
 	gif_generator()
+	generate_all_minds()

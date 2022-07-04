@@ -3,6 +3,8 @@ from sklearn.cluster import KMeans
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
+import os
+from tqdm import tqdm
 
 def visualize_genome_sequence(sequences, representation, input_params, output_neurons, path="mind.png", gap=4):
 	plt.cla()
@@ -51,7 +53,7 @@ def generate_centroid_genes(representation, path="./env_pops/gen_100/time_000.cs
 		sequences.append(sequence)
 	return sequences
 
-if __name__ == '__main__':
+def generate_all_minds(path="./env_pops/"):
 	representation={"A": "00", "G": "01", "C": "10", "T": "11"}
 	input_params = ["prev_direction", "moving", "x", "y"]
 	for i in range(5):
@@ -60,6 +62,12 @@ if __name__ == '__main__':
 				continue
 			input_params.append("surround_space\n_pixel_"+str(i)+str(j))
 	output_neurons = ["stay_at_rest"] + ["move_"+i for i in ["north", "south", "east", "west"]]
+	for directory in tqdm(sorted([path+i for i in os.listdir(path) if '.' not in i]), desc="generating_mind_graphs"):
+		file = sorted(os.listdir(directory))[0]
+		path = directory+'/'+file
+		sequences = generate_centroid_genes(representation, path=path)
+		output_path = directory.replace('env_pops', 'env_mind')+'.png'
+		visualize_genome_sequence(sequences, representation, input_params, output_neurons, path=output_path)
 
-	sequences = generate_centroid_genes(representation)
-	visualize_genome_sequence(sequences, representation, input_params, output_neurons)
+if __name__ == '__main__':
+	generate_all_minds()
