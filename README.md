@@ -23,7 +23,28 @@ Evolutionary algorithms to play basic games
 
 ![gen100](/sample_env_gifs/gen_099.gif)
 
-## Defining agent inputs:
+## Experimental Examples 2
+
+### Survival Rate
+
+![surv](/sample2_survival_progress.png)
+
+### Gen 1:
+
+![gen0](/sample2_env_gifs/gen_000.gif)
+
+### Gen 10:
+
+![gen9](/sample2_env_gifs/gen_009.gif)
+
+### Gen 25:
+
+![gen9](/sample2_env_gifs/gen_024.gif)
+
+### Gen 100:
+
+![gen100](/sample2_env_gifs/gen_099.gif)
+
 
 ```py
 {
