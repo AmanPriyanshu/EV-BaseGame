@@ -11,6 +11,12 @@ from record_experiment import main as gif_generator
 
 warnings.filterwarnings('ignore')
 
+if not os.path.exists('./env_pops/'):
+	os.mkdir('./env_pops/')
+if not os.path.exists('./env_gifs/'):
+	os.mkdir('./env_gifs/')
+if not os.path.exists('./env_maps/'):
+	os.mkdir('./env_maps/')
 
 class Environment:
 	def __init__(self, random_individual_generator_func, read_individual_states_func, take_individual_next_step_func, purge_generation_func, make_children_func, height=300, width=300, population_size=100, total_generations=10, margin=5, iterations_per_generation=30):
@@ -29,6 +35,7 @@ class Environment:
 		self.representation_genome = {"00": "A", "01": "G", "10": "C", "11": "T"}
 		self.current_t = 0
 		self.gen_counter = 0
+		self.rgb_stds, self.rgb_means = [], []
 
 	def generate_map(self):
 		interaction_maps = np.zeros((self.height+self.margin*2, self.width+self.margin*2))
@@ -71,6 +78,7 @@ class Environment:
 		self.interaction_maps, self.colourful_maps = self.generate_map()
 		record = {"x": [], "y": [], "R": [], "G": [], "B": [], "prev_direction": [], "moving": []}
 		record.update({"gene_grp_"+str(i+1):[] for i in range(len(pop[0]["bin_genes"]))})
+		rgb_arr = []
 		for individual in pop:
 			record["x"].append(individual["xt"])
 			record["y"].append(individual["yt"])
@@ -84,10 +92,14 @@ class Environment:
 				rgb_gene_group = [int(rgb_gene_group[i:i+8].encode(), 2) for i in range(0, len(rgb_gene_group), 8)]
 				rgb.append(rgb_gene_group)
 			rgb = [int(i) for i in np.mean(rgb, axis=0)]
+			rgb_arr.append(rgb)
 			for i,j in enumerate("RGB"):
 				record[j].append(rgb[i])
 				self.colourful_maps[record["y"][-1]][record["x"][-1]][i] = record[j][-1]
 				self.interaction_maps[record["y"][-1]][record["x"][-1]] = 2
+		rgb_arr = np.array(rgb_arr)
+		self.rgb_stds.append(np.std(rgb_arr, axis=0))
+		self.rgb_means.append(np.mean(rgb_arr, axis=0))
 		record = pd.DataFrame(record)
 		if not path_survived:
 			if not os.path.exists("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/"):
@@ -174,9 +186,25 @@ class Environment:
 		plt.plot(np.arange(len(survivals))+1, survivals, drawstyle="steps")
 		plt.ylim([0, self.population_size])
 		plt.title("Survival Frequency")
-		plt.xlabel("Survivors")
-		plt.ylabel("generation_no")
+		plt.xlabel("generation_no")
+		plt.ylabel("Survivors")
 		plt.savefig("survival_progress.png")
+		plt.cla()
+		plt.clf()
+		self.rgb_stds = np.array(self.rgb_stds)
+		self.rgb_means = np.array(self.rgb_means)
+		top = self.rgb_means-self.rgb_stds
+		bottom = self.rgb_means+self.rgb_stds
+		plt.fill_between(np.arange(len(self.rgb_means))+1, top.T[0], bottom.T[0], color='r', step="pre", alpha=0.4)
+		plt.fill_between(np.arange(len(self.rgb_means))+1, top.T[1], bottom.T[1], color='g', step="pre", alpha=0.4)
+		plt.fill_between(np.arange(len(self.rgb_means))+1, top.T[2], bottom.T[2], color='b', step="pre", alpha=0.4)
+		plt.plot(np.arange(len(self.rgb_means))+1, self.rgb_means.T[0], color='r')
+		plt.plot(np.arange(len(self.rgb_means))+1, self.rgb_means.T[1], color='g')
+		plt.plot(np.arange(len(self.rgb_means))+1, self.rgb_means.T[2], color='b')
+		plt.title("RGB Mean/Std")
+		plt.xlabel("generation_no")
+		plt.ylabel("Pixel Values")
+		plt.savefig("color.png")
 
 if __name__ == '__main__':
 	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=500, iterations_per_generation=75, total_generations=100, height=150, width=150)
