@@ -7,17 +7,17 @@ Evolutionary algorithms to play basic games
 
 ![gen0](/env_gifs/gen_000.gif)
 
-### Gen 9:
+### Gen 10:
 
-![gen0](/env_gifs/gen_009.gif)
+![gen9](/env_gifs/gen_009.gif)
+
+### Gen 25:
+
+![gen9](/env_gifs/gen_024.gif)
 
 ### Gen 100:
 
-![gen0](/env_gifs/gen_099.gif)
-
-### Gen 150:
-
-![gen0](/env_gifs/gen_149.gif)
+![gen100](/env_gifs/gen_099.gif)
 
 ## Defining agent inputs:
 
