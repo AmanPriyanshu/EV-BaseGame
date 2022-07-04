@@ -1,14 +1,15 @@
 import numpy as np
-from individual import random_individual_generator, read_individual_states
+from individual import random_individual_generator, read_individual_states, take_individual_next_step
 import cv2
 import pandas as pd
 
 
 class Environment:
-	def __init__(self, random_individual_generator_func, read_individual_states_func, height=300, width=300, safe_zones=[[150, 150, 0, 300]], population_size=100, total_generations=10, margin=5):
+	def __init__(self, random_individual_generator_func, read_individual_states_func, take_individual_next_step_func, height=300, width=300, safe_zones=[[150, 150, 0, 300]], population_size=100, total_generations=10, margin=5):
 		self.margin = margin
 		self.read_individual_states_func = read_individual_states_func
 		self.random_individual_generator_func = random_individual_generator_func
+		self.take_individual_next_step_func = take_individual_next_step_func
 		self.height = height
 		self.width = width
 		self.safe_zones = safe_zones
@@ -81,11 +82,13 @@ class Environment:
 
 	def take_next_steps(self, pop):
 		for individual in pop:
-			self.read_individual_states_func(individual)
+			state = self.read_individual_states_func(individual, self.interaction_maps[individual["yt"]-2:individual["yt"]+3, individual["xt"]-2:individual["xt"]+3])
+			self.take_individual_next_step_func(state, individual)
+
 			exit()
 
 if __name__ == '__main__':
-	env = Environment(random_individual_generator, read_individual_states, population_size=1000)
+	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, population_size=100)
 	pop = env.randomly_populate()
 	env.draw_map(pop)
 	env.take_next_steps(pop)
