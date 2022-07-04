@@ -5,23 +5,23 @@ Evolutionary algorithms to play basic games
 
 ### Survival Rate
 
-![surv](/survival_progress.png)
+![surv](/sample_survival_progress.png)
 
 ### Gen 1:
 
-![gen0](/env_gifs/gen_000.gif)
+![gen0](/sample_env_gifs/gen_000.gif)
 
 ### Gen 10:
 
-![gen9](/env_gifs/gen_009.gif)
+![gen9](/sample_env_gifs/gen_009.gif)
 
 ### Gen 25:
 
-![gen9](/env_gifs/gen_024.gif)
+![gen9](/sample_env_gifs/gen_024.gif)
 
 ### Gen 100:
 
-![gen100](/env_gifs/gen_099.gif)
+![gen100](/sample_env_gifs/gen_099.gif)
 
 ## Defining agent inputs:
 
