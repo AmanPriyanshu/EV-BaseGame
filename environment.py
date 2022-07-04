@@ -173,6 +173,9 @@ class Environment:
 		plt.fill_between(np.arange(len(survivals))+1, survivals, step="pre", alpha=0.4)
 		plt.plot(np.arange(len(survivals))+1, survivals, drawstyle="steps")
 		plt.ylim([0, self.population_size])
+		plt.title("Survival Frequency")
+		plt.xlabel("Survivors")
+		plt.ylabel("generation_no")
 		plt.savefig("survival_progress.png")
 
 if __name__ == '__main__':
