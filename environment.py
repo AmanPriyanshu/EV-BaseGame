@@ -207,6 +207,6 @@ class Environment:
 		plt.savefig("color.png")
 
 if __name__ == '__main__':
-	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=500, iterations_per_generation=75, total_generations=100, height=150, width=150)
+	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=500, iterations_per_generation=150, total_generations=100, height=150, width=150)
 	env.run_experiment()
 	gif_generator()
