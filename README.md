@@ -1,6 +1,12 @@
 # EV-BaseGame
 Evolutionary algorithms to play basic games
 
+## Experimental Examples
+
+### Gen0:
+
+![gen0]()
+
 ## Defining agent inputs:
 
 ```py
@@ -45,7 +51,7 @@ Input context - 28 `input_variables` and 5 `output_variables`. Reconstituting th
 
 Now we want float values to represent the passing weights between the inputs/outputs. Lets begin understanding the sensitivity of the softmax function, we can simply extend the sigmoid function's sensitive to approximate softmax, as sigmoid is simply limited softmax.
 
-[sigmoid](/images/sigmoid.PNG)
+![sigmoid](/images/sigmoid.PNG)
 
 Looking at the graph, it should be substantial to consider upto 3 decimal places `._ _ _` at the same time, a bar between `[-4, 4]` should be sufficient. Therefore we need to find a numeric range constituting an integer space ∈ `[0, 8000] ~ [0, 8192) = [0, 2^13)`. It will then be normalized as `(value-4096)/1000`.
 
