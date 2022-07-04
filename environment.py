@@ -2,10 +2,12 @@ import numpy as np
 from individual import random_individual_generator, read_individual_states, take_individual_next_step, make_children_function
 from purger import purge_generation
 import cv2
+from matplotlib import pyplot as plt
 import pandas as pd
 import warnings
 import os
 from tqdm import trange
+from record_experiment import main as gif_generator
 
 warnings.filterwarnings('ignore')
 
@@ -92,11 +94,11 @@ class Environment:
 				os.mkdir("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/")
 				os.mkdir("./env_maps/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/")
 			record.to_csv("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/time_"+"0"*(len(str(self.iterations_per_generation)) - len(str(self.current_t)))+str(self.current_t)+".csv", index=False)
-			resized_img = cv2.resize(self.colourful_maps, (self.width*2, self.height*2), interpolation = cv2.INTER_AREA)
+			resized_img = cv2.resize(self.colourful_maps, (self.width*4, self.height*4), interpolation = cv2.INTER_AREA)
 			cv2.imwrite("./env_maps/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/time_"+"0"*(len(str(self.iterations_per_generation)) - len(str(self.current_t)))+str(self.current_t)+".png", resized_img)
 		else:
 			record.to_csv("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"_survived.csv", index=False)
-			resized_img = cv2.resize(self.colourful_maps, (self.width*2, self.height*2), interpolation = cv2.INTER_AREA)
+			resized_img = cv2.resize(self.colourful_maps, (self.width*4, self.height*4), interpolation = cv2.INTER_AREA)
 			cv2.imwrite("./env_maps/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"_survived.png", resized_img)
 
 	def take_next_steps(self, pop):
@@ -156,15 +158,24 @@ class Environment:
 		return pop
 
 	def run_experiment(self):
+		survivals = []
 		pop = env.randomly_populate()
 		for gen_no in range(self.total_generations):
 			pop = self.run_generational_iters(pop)
 			pop = self.purge(pop)
 			print(len(pop), "survived!")
+			survivals.append(len(pop))
 			gene_pool = self.make_children(pop)
 			pop = self.distribute_new_gene_population(gene_pool)
 		self.draw_map(pop)
+		plt.cla()
+		plt.clf()
+		plt.fill_between(np.arange(len(survivals))+1, survivals, step="pre", alpha=0.4)
+		plt.plot(np.arange(len(survivals))+1, survivals, drawstyle="steps")
+		plt.ylim([0, self.population_size])
+		plt.savefig("survival_progress.png")
 
 if __name__ == '__main__':
-	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=500, iterations_per_generation=150, total_generations=100)
+	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=500, iterations_per_generation=75, total_generations=100, height=150, width=150)
 	env.run_experiment()
+	gif_generator()

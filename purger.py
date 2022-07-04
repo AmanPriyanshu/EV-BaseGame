@@ -1,6 +1,6 @@
 import numpy as np
 
-def purge_generation(interaction_maps, pop, safe_zones=[[0+5, 150+5, 0+5, 300+5]]):
+def purge_generation(interaction_maps, pop, safe_zones=[[0+5, 75+5, 0+5, 150+5]]):
 	safe_pop = []
 	for individual in pop:
 		unsafe = True
