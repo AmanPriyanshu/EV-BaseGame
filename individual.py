@@ -27,12 +27,9 @@ def take_individual_next_step(state, individual, directions=["north", "south", "
 			val = (int(gene_grp[9:].encode(), 2)-4096)/1000
 			output_impulses[output_neuron] += state[input_param]*val
 	output_impulses = np.array([output_impulses[i] for i in range(5)])
-	print(output_impulses)
 	output_impulses = np.exp(output_impulses)
 	output_impulses = output_impulses/np.sum(output_impulses)
-	print(output_impulses)
 	chosen_outcome = np.argmax(output_impulses)
-	print(chosen_outcome)
 	x = individual["xt"]
 	y = individual["yt"]
 	if chosen_outcome==0:
