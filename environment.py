@@ -81,14 +81,25 @@ class Environment:
 		cv2.imwrite("./env_maps/time_"+"0"*(len(str(self.total_generations)) - len(str(self.current_t)))+str(self.current_t)+".png", resized_img)
 
 	def take_next_steps(self, pop):
+		new_pop = []
 		for individual in pop:
 			state, numeric_state = self.read_individual_states_func(individual, self.interaction_maps[individual["yt"]-2:individual["yt"]+3, individual["xt"]-2:individual["xt"]+3])
-			self.take_individual_next_step_func(numeric_state, individual)
-
-			exit()
+			output_impulses, new_state = self.take_individual_next_step_func(numeric_state, individual)
+			if new_state["xt"]<self.margin:
+				new_state["xt"] += 1
+			if new_state["xt"]>self.margin+self.width-1:
+				new_state["xt"] -= 1
+			if new_state["yt"]<self.margin:
+				new_state["yt"] += 1
+			if new_state["yt"]>self.margin+self.width-1:
+				new_state["yt"] -= 1
+			new_pop.append(new_state)
+		self.current_t += 1
+		return new_state
 
 if __name__ == '__main__':
-	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, population_size=100, height=10, width=11)
+	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, population_size=1000)
 	pop = env.randomly_populate()
 	env.draw_map(pop)
-	env.take_next_steps(pop)
+	pop = env.take_next_steps(pop)
+	env.draw_map(pop)

@@ -18,7 +18,6 @@ def read_individual_states(individual, surroundings, directions=["north", "south
 	return state, numeric_state
 
 def take_individual_next_step(state, individual, directions=["north", "south", "west", "east"]):
-	print(individual)
 	output_impulses = {i:0.0 for i in range(5)}
 	for gene_grp in individual["bin_genes"]:
 		fires = int(gene_grp[0])
@@ -28,9 +27,12 @@ def take_individual_next_step(state, individual, directions=["north", "south", "
 			val = (int(gene_grp[9:].encode(), 2)-4096)/1000
 			output_impulses[output_neuron] += state[input_param]*val
 	output_impulses = np.array([output_impulses[i] for i in range(5)])
+	print(output_impulses)
 	output_impulses = np.exp(output_impulses)
 	output_impulses = output_impulses/np.sum(output_impulses)
+	print(output_impulses)
 	chosen_outcome = np.argmax(output_impulses)
+	print(chosen_outcome)
 	x = individual["xt"]
 	y = individual["yt"]
 	if chosen_outcome==0:
@@ -76,8 +78,7 @@ def take_individual_next_step(state, individual, directions=["north", "south", "
 			elif individual["prev_direction"]=="west":
 				direction = "east"
 	new_state = {"bin_genes": individual["bin_genes"], "yt": y, "xt": x, "prev_direction": direction, "moving": moving}
-	print(new_state)
-	return output_impulses
+	return output_impulses, new_state
 
 if __name__ == '__main__':
 	random_individual_generator()
