@@ -17,7 +17,7 @@ def read_individual_states(individual, surroundings, directions=["north", "south
 			numeric_state.append(surroundings[i][j])
 	return state, numeric_state
 
-def take_individual_next_step(state, individual, directions=["north", "south", "west", "east"], random_allowed=False):
+def take_individual_next_step_turn_based(state, individual, directions=["north", "south", "west", "east"], random_allowed=False):
 	output_impulses = {i:0.0 for i in range(5)}
 	for gene_grp in individual["bin_genes"]:
 		fires = int(gene_grp[0])
@@ -76,6 +76,43 @@ def take_individual_next_step(state, individual, directions=["north", "south", "
 				direction = "west"
 			elif individual["prev_direction"]=="west":
 				direction = "east"
+	new_state = {"bin_genes": individual["bin_genes"], "yt": y, "xt": x, "prev_direction": direction, "moving": moving}
+	return output_impulses, new_state
+
+def take_individual_next_step(state, individual, directions=["north", "south", "west", "east"], random_allowed=False):
+	output_impulses = {i:0.0 for i in range(5)}
+	for gene_grp in individual["bin_genes"]:
+		fires = int(gene_grp[0])
+		if fires:
+			input_param = int(gene_grp[1:6].encode(), 2)%28
+			output_neuron = int(gene_grp[6:9].encode(), 2)%5
+			val = (int(gene_grp[9:].encode(), 2)-4096)/1000
+			output_impulses[output_neuron] += state[input_param]*val
+	output_impulses = np.array([output_impulses[i] for i in range(5)])
+	if np.sum(np.abs(output_impulses))==0 and random_allowed:
+		output_impulses = np.random.normal(loc=0.0, scale=2.5, size=len(output_impulses))
+	output_impulses = np.exp(output_impulses)
+	output_impulses = output_impulses/np.sum(output_impulses)
+	chosen_outcome = np.argmax(output_impulses)
+	x = individual["xt"]
+	y = individual["yt"]
+	if chosen_outcome==0:
+		moving = 0
+		direction = individual["prev_direction"]
+	else:
+		moving = 1
+		if chosen_outcome==1:
+			y += -1
+			direction = "north"
+		elif chosen_outcome==2:
+			y += 1
+			direction = "south"
+		elif chosen_outcome==3:
+			x += 1
+			direction = "east"
+		elif chosen_outcome==4:
+			x += -1
+			direction = "west"
 	new_state = {"bin_genes": individual["bin_genes"], "yt": y, "xt": x, "prev_direction": direction, "moving": moving}
 	return output_impulses, new_state
 

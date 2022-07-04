@@ -5,7 +5,7 @@ Evolutionary algorithms to play basic games
 
 ```py
 {
-	"prev_direction" : options ("north", "south", "west", "east") --> default ("north")
+	"prev_direction" : options ("north", "south", "west", "east") --> default (Any of the foure)
 	"moving" : options (0 - `previously_at_rest`, 1 - `previously_moving`) --> default (0)
 	"x" : range (0, WIDTH)
 	"y" : range (0, HEIGHT)

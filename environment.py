@@ -44,8 +44,10 @@ class Environment:
 	def generate_random_positions(self):
 		y_array, x_array = [], []
 		while len(y_array)!=self.population_size:
-			y = np.random.randint(low=self.margin, high=self.height+self.margin)
-			x = np.random.randint(low=self.margin, high=self.width+self.margin)
+			y = np.random.randint(low=0, high=self.height+2*self.margin)
+			x = np.random.randint(low=0, high=self.width+2*self.margin)
+			if self.interaction_maps[y][x] == 1:
+				continue
 			not_present = True
 			for i,j in zip(x_array, y_array):
 				if i==x and j==y:
@@ -59,7 +61,7 @@ class Environment:
 		pop = []
 		x_array, y_array = self.generate_random_positions()
 		for i in range(self.population_size):
-			individual = {"bin_genes": self.random_individual_generator_func(),"yt": y_array[i], "xt": x_array[i], "prev_direction": "north", "moving": 0}
+			individual = {"bin_genes": self.random_individual_generator_func(),"yt": y_array[i], "xt": x_array[i], "prev_direction": np.random.choice(["north", "south", "east", "west"]), "moving": 0}
 			pop.append(individual)
 		return pop
 
@@ -103,20 +105,14 @@ class Environment:
 		for idx, individual in enumerate(pop):
 			state, numeric_state = self.read_individual_states_func(individual, self.interaction_maps[individual["yt"]-2:individual["yt"]+3, individual["xt"]-2:individual["xt"]+3])
 			output_impulses, new_state = self.take_individual_next_step_func(numeric_state, individual)
-			if new_state["xt"]<self.margin:
-				new_state["xt"] += 1
-			if new_state["xt"]>self.margin+self.width-1:
-				new_state["xt"] -= 1
-			if new_state["yt"]<self.margin:
-				new_state["yt"] += 1
-			if new_state["yt"]>self.margin+self.width-1:
-				new_state["yt"] -= 1
 			not_present = True
 			for idx_j, (i,j) in enumerate(zip(x_array, y_array)):
 				if idx_j==idx:
 					continue
 				if i==new_state["xt"] and j==new_state["yt"]:
 					not_present = False
+			if self.interaction_maps[new_state["yt"]][new_state["xt"]] == 1:
+				not_present = False
 			if not_present:
 				x_array.append(new_state["xt"])
 				y_array.append(new_state["yt"])
@@ -155,7 +151,7 @@ class Environment:
 		pop = []
 		x_array, y_array = self.generate_random_positions()
 		for i in range(self.population_size):
-			individual = {"bin_genes": gene_pool[i],"yt": y_array[i], "xt": x_array[i], "prev_direction": "north", "moving": 0}
+			individual = {"bin_genes": gene_pool[i],"yt": y_array[i], "xt": x_array[i], "prev_direction": np.random.choice(["north", "south", "east", "west"]), "moving": 0}
 			pop.append(individual)
 		return pop
 
@@ -170,5 +166,5 @@ class Environment:
 		self.draw_map(pop)
 
 if __name__ == '__main__':
-	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=1000, iterations_per_generation=150)
+	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=500, iterations_per_generation=150, total_generations=100)
 	env.run_experiment()
