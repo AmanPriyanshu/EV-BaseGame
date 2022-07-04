@@ -11,10 +11,6 @@ Evolutionary algorithms to play basic games
 
 ![gen0](/env_gifs/gen_009.gif)
 
-### Gen 25:
-
-![gen0](/env_gifs/gen_024.gif)
-
 ### Gen 100:
 
 ![gen0](/env_gifs/gen_099.gif)
