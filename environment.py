@@ -15,6 +15,8 @@ if not os.path.exists('./env_pops/'):
 	os.mkdir('./env_pops/')
 if not os.path.exists('./env_gifs/'):
 	os.mkdir('./env_gifs/')
+if not os.path.exists('./env_mind/'):
+	os.mkdir('./env_mind/')
 if not os.path.exists('./env_maps/'):
 	os.mkdir('./env_maps/')
 
