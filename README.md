@@ -3,6 +3,10 @@ Evolutionary algorithms to play basic games
 
 ## Experimental Examples
 
+### Survival Rate
+
+![surv](/survival_progress.png)
+
 ### Gen 1:
 
 ![gen0](/env_gifs/gen_000.gif)
