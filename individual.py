@@ -1,6 +1,6 @@
 import numpy as np
 
-def random_individual_generator(num_chromosomes=5):
+def random_individual_generator(num_chromosomes=16):
 	genes = np.random.rand(num_chromosomes*22)
 	genes = ''.join([i for i in np.where(genes>0.5, "1", "0")])
 	genes = [genes[i:i+22] for i in range(0, len(genes), 22)]
@@ -17,7 +17,7 @@ def read_individual_states(individual, surroundings, directions=["north", "south
 			numeric_state.append(surroundings[i][j])
 	return state, numeric_state
 
-def take_individual_next_step(state, individual, directions=["north", "south", "west", "east"]):
+def take_individual_next_step(state, individual, directions=["north", "south", "west", "east"], random_allowed=False):
 	output_impulses = {i:0.0 for i in range(5)}
 	for gene_grp in individual["bin_genes"]:
 		fires = int(gene_grp[0])
@@ -27,6 +27,8 @@ def take_individual_next_step(state, individual, directions=["north", "south", "
 			val = (int(gene_grp[9:].encode(), 2)-4096)/1000
 			output_impulses[output_neuron] += state[input_param]*val
 	output_impulses = np.array([output_impulses[i] for i in range(5)])
+	if np.sum(np.abs(output_impulses))==0 and random_allowed:
+		output_impulses = np.random.normal(loc=0.0, scale=2.5, size=len(output_impulses))
 	output_impulses = np.exp(output_impulses)
 	output_impulses = output_impulses/np.sum(output_impulses)
 	chosen_outcome = np.argmax(output_impulses)

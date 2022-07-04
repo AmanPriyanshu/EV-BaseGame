@@ -82,8 +82,8 @@ class Environment:
 			rgb = [int(i) for i in np.mean(rgb, axis=0)]
 			for i,j in enumerate("RGB"):
 				record[j].append(rgb[i])
-				self.colourful_maps[record["x"][-1]][record["y"][-1]][i] = record[j][-1]
-				self.interaction_maps[record["x"][-1]][record["y"][-1]] = 2
+				self.colourful_maps[record["y"][-1]][record["x"][-1]][i] = record[j][-1]
+				self.interaction_maps[record["y"][-1]][record["x"][-1]] = 2
 		record = pd.DataFrame(record)
 		if not path_survived:
 			if not os.path.exists("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/"):
@@ -127,8 +127,7 @@ class Environment:
 		self.current_t += 1
 		return new_pop
 
-	def run_generational_iters(self):
-		pop = env.randomly_populate()
+	def run_generational_iters(self, pop):
 		for iter_num in trange(self.iterations_per_generation, desc="generation_"+str(self.gen_counter)):
 			env.draw_map(pop)
 			pop = env.take_next_steps(pop)
@@ -160,10 +159,16 @@ class Environment:
 			pop.append(individual)
 		return pop
 
+	def run_experiment(self):
+		pop = env.randomly_populate()
+		for gen_no in range(self.total_generations):
+			pop = self.run_generational_iters(pop)
+			pop = self.purge(pop)
+			print(len(pop), "survived!")
+			gene_pool = self.make_children(pop)
+			pop = self.distribute_new_gene_population(gene_pool)
+		self.draw_map(pop)
+
 if __name__ == '__main__':
-	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=1000, iterations_per_generation=3)
-	pop = env.run_generational_iters()
-	pop = env.purge(pop)
-	gene_pool = env.make_children(pop)
-	pop = env.distribute_new_gene_population(gene_pool)
-	env.draw_map(pop)
+	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=1000, iterations_per_generation=150)
+	env.run_experiment()
