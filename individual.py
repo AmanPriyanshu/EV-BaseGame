@@ -6,5 +6,8 @@ def random_individual_generator(num_chromosomes=5):
 	genes = [genes[i:i+22] for i in range(0, len(genes), 22)]
 	return genes
 
+def read_individual_states(individual):
+	print("here", individual)
+
 if __name__ == '__main__':
 	random_individual_generator()
