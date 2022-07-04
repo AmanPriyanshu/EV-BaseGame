@@ -1,5 +1,5 @@
 import numpy as np
-from individual import random_individual_generator, read_individual_states, take_individual_next_step
+from individual import random_individual_generator, read_individual_states, take_individual_next_step, make_children_function
 from purger import purge_generation
 import cv2
 import pandas as pd
@@ -11,8 +11,9 @@ warnings.filterwarnings('ignore')
 
 
 class Environment:
-	def __init__(self, random_individual_generator_func, read_individual_states_func, take_individual_next_step_func, purge_generation_func height=300, width=300, population_size=100, total_generations=10, margin=5, iterations_per_generation=30):
+	def __init__(self, random_individual_generator_func, read_individual_states_func, take_individual_next_step_func, purge_generation_func, make_children_func, height=300, width=300, population_size=100, total_generations=10, margin=5, iterations_per_generation=30):
 		self.iterations_per_generation = iterations_per_generation
+		self.make_children_func = make_children_func
 		self.purge_generation_func = purge_generation_func
 		self.margin = margin
 		self.read_individual_states_func = read_individual_states_func
@@ -62,7 +63,7 @@ class Environment:
 			pop.append(individual)
 		return pop
 
-	def draw_map(self, pop, t=0):
+	def draw_map(self, pop, t=0, path_survived=False):
 		self.interaction_maps, self.colourful_maps = self.generate_map()
 		record = {"x": [], "y": [], "R": [], "G": [], "B": [], "prev_direction": [], "moving": []}
 		record.update({"gene_grp_"+str(i+1):[] for i in range(len(pop[0]["bin_genes"]))})
@@ -84,12 +85,17 @@ class Environment:
 				self.colourful_maps[record["x"][-1]][record["y"][-1]][i] = record[j][-1]
 				self.interaction_maps[record["x"][-1]][record["y"][-1]] = 2
 		record = pd.DataFrame(record)
-		if not os.path.exists("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/"):
-			os.mkdir("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/")
-			os.mkdir("./env_maps/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/")
-		record.to_csv("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/time_"+"0"*(len(str(self.iterations_per_generation)) - len(str(self.current_t)))+str(self.current_t)+".csv", index=False)
-		resized_img = cv2.resize(self.colourful_maps, (self.width*2, self.height*2), interpolation = cv2.INTER_AREA)
-		cv2.imwrite("./env_maps/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/time_"+"0"*(len(str(self.iterations_per_generation)) - len(str(self.current_t)))+str(self.current_t)+".png", resized_img)
+		if not path_survived:
+			if not os.path.exists("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/"):
+				os.mkdir("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/")
+				os.mkdir("./env_maps/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/")
+			record.to_csv("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/time_"+"0"*(len(str(self.iterations_per_generation)) - len(str(self.current_t)))+str(self.current_t)+".csv", index=False)
+			resized_img = cv2.resize(self.colourful_maps, (self.width*2, self.height*2), interpolation = cv2.INTER_AREA)
+			cv2.imwrite("./env_maps/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"/time_"+"0"*(len(str(self.iterations_per_generation)) - len(str(self.current_t)))+str(self.current_t)+".png", resized_img)
+		else:
+			record.to_csv("./env_pops/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"_survived.csv", index=False)
+			resized_img = cv2.resize(self.colourful_maps, (self.width*2, self.height*2), interpolation = cv2.INTER_AREA)
+			cv2.imwrite("./env_maps/gen_"+"0"*(len(str(self.total_generations)) - len(str(self.gen_counter)))+str(self.gen_counter)+"_survived.png", resized_img)
 
 	def take_next_steps(self, pop):
 		new_pop = []
@@ -127,13 +133,37 @@ class Environment:
 			env.draw_map(pop)
 			pop = env.take_next_steps(pop)
 		env.draw_map(pop)
-		self.gen_counter+=1
+		return pop
 
 	def purge(self, pop):
 		alive_pop = self.purge_generation_func(self.interaction_maps, pop)
+		env.draw_map(alive_pop, path_survived=True)
+		return alive_pop
 
+	def make_children(self, pop):
+		children_required = self.population_size - len(pop)
+		child_genes = []
+		for idx in range(children_required):
+			i,j = np.random.randint(len(pop), size=2)
+			child = self.make_children_func(pop[i],pop[j])
+			child_genes.append(child)
+		parent_genes = [individual["bin_genes"] for individual in pop]
+		return child_genes+parent_genes
+
+	def distribute_new_gene_population(self, gene_pool):
+		self.gen_counter+=1
+		self.current_t = 0
+		pop = []
+		x_array, y_array = self.generate_random_positions()
+		for i in range(self.population_size):
+			individual = {"bin_genes": gene_pool[i],"yt": y_array[i], "xt": x_array[i], "prev_direction": "north", "moving": 0}
+			pop.append(individual)
+		return pop
 
 if __name__ == '__main__':
-	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, population_size=1000)
-	env.run_generational_iters()
-	env.purge()
+	env = Environment(random_individual_generator, read_individual_states, take_individual_next_step, purge_generation, make_children_function, population_size=1000, iterations_per_generation=3)
+	pop = env.run_generational_iters()
+	pop = env.purge(pop)
+	gene_pool = env.make_children(pop)
+	pop = env.distribute_new_gene_population(gene_pool)
+	env.draw_map(pop)
