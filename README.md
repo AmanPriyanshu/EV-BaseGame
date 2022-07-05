@@ -55,7 +55,7 @@ As we can see that when `y` is large, the agent is at the `bottom` of the map, w
 
 ```py
 {
-	"prev_direction" : options ("north", "south", "west", "east") --> default (Any of the foure)
+	"prev_direction" : options ("north", "south", "west", "east") --> default (Any of the four)
 	"moving" : options (0 - `previously_at_rest`, 1 - `previously_moving`) --> default (0)
 	"x" : range (0, WIDTH)
 	"y" : range (0, HEIGHT)
@@ -73,7 +73,7 @@ The model basically receives a total of 2 (self-based) + 2 (global) + 24 (surrou
 
 ```py
 {
-	"next_move" : options ("rest", "forward", "left", "right", "backward")
+	"next_move" : options ("rest", "north", "south", "east", "west") # "forward", "left", "right", "backward")
 }
 ```
 
