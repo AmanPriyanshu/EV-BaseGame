@@ -45,6 +45,11 @@ Evolutionary algorithms to play basic games
 
 ![gen100](/sample2_env_gifs/gen_099.gif)
 
+## Sample Mind-Map:
+
+![mind](/sample_env_mind/gen_099.png)
+
+## Input Representations
 
 ```py
 {
