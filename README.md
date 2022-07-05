@@ -49,7 +49,7 @@ Evolutionary algorithms to play basic games
 
 ![mind](/sample2_env_mind/gen_099_survived.png)
 
-As we can see that when `y` is large, the agent is at the `bottom` of the map, which makes sense why the `"north"` neuron is activate. On the other hand, when `x` is too large, which means agent is on the `right` hand side, it activates the `"west"` neuron which pushes it towards the `left` side. The `move_west` neuron also gets deactivated with large values of `y` which means it potentially prefers to cover the `y` distance first.
+As we can see that when `y` is large, the agent is at the `bottom` of the map, which makes sense why the `move_north` neuron is activate. On the other hand, when `x` is too large, which means agent is on the `right` hand side, it activates the `move_west` neuron which pushes it towards the `left` side. The `move_west` neuron also gets deactivated with large values of `y` which means it potentially prefers to cover the `y` distance first.
 
 ## Input Representations
 
