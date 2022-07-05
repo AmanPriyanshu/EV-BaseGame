@@ -47,7 +47,7 @@ Evolutionary algorithms to play basic games
 
 ## Sample Mind-Map:
 
-![mind](/sample2_env_mind/gen_000_survived.png)
+![mind](/sample2_env_mind/gen_099_survived.png)
 
 ## Input Representations
 
