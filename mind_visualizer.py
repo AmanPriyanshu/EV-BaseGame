@@ -62,11 +62,10 @@ def generate_all_minds(path="./env_pops/"):
 				continue
 			input_params.append("surround_space\n_pixel_"+str(i)+str(j))
 	output_neurons = ["stay_at_rest"] + ["move_"+i for i in ["north", "south", "east", "west"]]
-	for directory in tqdm(sorted([path+i for i in os.listdir(path) if '.' not in i]), desc="generating_mind_graphs"):
-		file = sorted(os.listdir(directory))[0]
-		path = directory+'/'+file
+	for directory in tqdm(sorted([path+i for i in os.listdir(path) if '.' in i]), desc="generating_mind_graphs"):
+		path = directory
 		sequences = generate_centroid_genes(representation, path=path)
-		output_path = directory.replace('env_pops', 'env_mind')+'.png'
+		output_path = directory.replace('env_pops', 'env_mind').replace('.csv','.png')
 		visualize_genome_sequence(sequences, representation, input_params, output_neurons, path=output_path)
 
 if __name__ == '__main__':
