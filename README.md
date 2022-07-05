@@ -47,10 +47,17 @@ Evolutionary algorithms to play basic games
 
 ## Sample Mind-Map:
 
+### Final Generation's Map:
+
 ![mind](/sample2_env_mind/gen_099_survived.png)
 
 As we can see that when `y` is large, the agent is at the `bottom` of the map, which makes sense why the `move_north` neuron is activate. On the other hand, when `x` is too large, which means agent is on the `right` hand side, it activates the `move_west` neuron which pushes it towards the `left` side. The `move_west` neuron also gets deactivated with large values of `y` which means it potentially prefers to cover the `y` distance first.
 
+### Interesting Maps:
+
+![mind](/sample2_env_mind/gen_093_survived.png)
+
+Taking a look at this we can see that when a pixel appears directly to the `west(02)` of the agent it reduces it's response-impulse towards `move_west` implying that it offers the agent to move `north`. This builds to the concept that upon blockage the agent has learnt to overcome it.
 ## Input Representations
 
 ```py
